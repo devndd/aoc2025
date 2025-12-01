@@ -59,7 +59,7 @@ fn rotate_by_step(current: i32, rotation: &Rotation) -> (i32,i32) {
     let mut ans = 0;
     let mut zeroes = 0;
     let mut last = current;
-    for i in 0..rotation.amount {
+    for _i in 0..rotation.amount {
         match rotation.direction.as_str() {
             "L" => { ans = (last - 1 + 100) % 100}
             "R" => { ans = (last + 1) % 100}
