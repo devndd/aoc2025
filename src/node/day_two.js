@@ -1,7 +1,8 @@
 const fs = require('node:fs');
 const { start } = require('node:repl');
 let ranges = [];
-let all_hits = [];
+let all_hits1 = [];
+let all_hits2 = [];
 
 fs.readFile('../../input/2.in', 'utf8', (err, data) => {
   if (err) {
@@ -15,13 +16,51 @@ fs.readFile('../../input/2.in', 'utf8', (err, data) => {
   })
 
     ranges.forEach(range => {
-        let hits = get_hits(range);
-        all_hits = all_hits.concat(hits);
+        let hits = get_hits_one(range);
+        all_hits1 = all_hits1.concat(hits);
     })
-    console.log("sum:", all_hits.map(h => parseInt(h)).reduce((a, b) => a + b,0));
+
+    ranges.forEach(range => {
+      let hits = get_hits_two(range);
+      all_hits2 = all_hits2.concat(hits);
+    });
+
+
+    console.log("part one sum:", all_hits1.map(h => parseInt(h)).reduce((a, b) => a + b,0));
+    console.log("part two sum:", all_hits2.map(h => parseInt(h)).reduce((a, b) => a + b,0));
 });
 
-function get_hits(range) {
+function all_equal(values) {
+
+  if (values.length < 2) {
+    return false;
+  }
+  for (let i = 1; i < values.length; i++) {
+    if (values[i-1] != values[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function get_hits_two(range) {
+    let start = +range.start;
+    let end = +range.end;
+    let hits = [];
+    for (let n = start; n <= end; n += 1) {
+        n_str = n+"";
+        for (let part = n_str.length; part > 0; part -= 1) {
+          if (all_equal(partition(n_str, part))){
+            hits.push(n_str);
+            break;
+          }
+        }
+    }
+    return hits;
+} 
+
+
+function get_hits_one(range) {
     let start = +range.start;
     let end = +range.end;
     let hits = [];
@@ -36,4 +75,17 @@ function get_hits(range) {
         }
     }
     return hits;
+}
+
+function partition(str, section_length) {
+  let parts = [];
+
+  if (str.length % section_length == 0) {
+    let sections = str.length / section_length;
+    for (let offset = 0; offset <= str.length - section_length; offset += section_length) {
+      let part = str.substring(offset, offset + section_length);
+      parts.push(part);
+    }
+  }
+  return parts;
 }
