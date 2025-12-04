@@ -8,12 +8,17 @@ fs.readFile('../../input/3.in', 'utf8', (err, data) => {
   let sum = 0;
   let lines = data.trim().split('\n');
   lines.forEach(bank => {
-    let l = get_max_location(bank);
-    let rest = get_max_from(bank, l.l);
-    sum += l.m*10+rest;
+    let battery = part_one_battery(bank);
+    sum += battery;
   });
   console.log("part one:", sum)
 });
+
+function part_one_battery(bank) {
+  let location = get_max_location(bank);
+  let max_from_location = get_max_from(bank, location.l);
+  return location.m * 10 + max_from_location;
+}
 
 function get_max_from(bank, location) {
   let max = 0;
