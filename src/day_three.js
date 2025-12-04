@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const BATTERY_LENGTH = 12;
-fs.readFile('../../input/3.in', 'utf8', (err, data) => {
+fs.readFile('../input/3.in', 'utf8', (err, data) => {
   if (err) {
     console.error(err);
     return;
