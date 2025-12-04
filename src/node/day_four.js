@@ -1,13 +1,12 @@
 
 const fs = require('node:fs');
 
+
 fs.readFile('../../input/4.in', 'utf8', (err, data) => {
     if (err) {
         console.error(err);
         return;
     }
-    let sum_one = 0;
-    let sum_two = 0;
     let lines = data.trim().split('\n');
     let rows = [];
     lines.forEach(s => rows.push(s.split('')));
@@ -23,10 +22,10 @@ fs.readFile('../../input/4.in', 'utf8', (err, data) => {
         part_two_ans += next;
         remove_rolls(rows);
     }
-
     console.log("part one:", part_one_ans);
     console.log("part two:", part_two_ans + part_one_ans);
 });
+
 
 function remove_rolls(rows) {
     let row_count = rows.length;
@@ -39,6 +38,7 @@ function remove_rolls(rows) {
         }
     }
 }
+
 
 function movable_rolls(rows) {
     let sum = 0;
@@ -55,6 +55,7 @@ function movable_rolls(rows) {
     }
     return sum;
 }
+
 
 function count_neighbours(rows, row, col) {
     let rolls = 0
