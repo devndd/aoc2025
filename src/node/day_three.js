@@ -10,9 +10,6 @@ fs.readFile('../../input/3.in', 'utf8', (err, data) => {
   lines.forEach(bank => {
     let l = get_max_location(bank);
     let rest = get_max_from(bank, l.l);
-    console.log(l);
-    console.log(rest);
-    console.log(l.m . rest);
     sum += l.m*10+rest;
   });
   console.log("part one:", sum)
