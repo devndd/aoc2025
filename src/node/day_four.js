@@ -8,19 +8,19 @@ fs.readFile('../../input/4.in', 'utf8', (err, data) => {
         return;
     }
     let lines = data.trim().split('\n');
-    let rows = [];
-    lines.forEach(s => rows.push(s.split('')));
-    let part_one_ans = movable_rolls(rows);
-    remove_rolls(rows);
+    let rolls = [];
+    lines.forEach(s => rolls.push(s.split('')));
+    let part_one_ans = movable_rolls(rolls);
+    remove_rolls(rolls);
     let part_two_ans = 0;
     let done = false;
     while (!done) {
-        let next = movable_rolls(rows);
+        let next = movable_rolls(rolls);
         if (next == 0) {
             done = true;
         }
         part_two_ans += next;
-        remove_rolls(rows);
+        remove_rolls(rolls);
     }
     console.log("part one:", part_one_ans);
     console.log("part two:", part_two_ans + part_one_ans);
