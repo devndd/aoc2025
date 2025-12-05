@@ -4,7 +4,7 @@ let ranges = [];
 let all_hits1 = [];
 let all_hits2 = [];
 
-fs.readFile('../input/2.in', 'utf8', (err, data) => {
+fs.readFile('input/2.in', 'utf8', (err, data) => {
   if (err) {
     console.error(err);
     return;

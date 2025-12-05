@@ -47,7 +47,7 @@ function get_distinct_ranges(ranges) {
             let last_range = distinct_ranges.at(-1);
             if (need_to_merge(last_range, range)) {
                 if (!(range.start > last_range.start && range.end < last_range.end)) {
-                    merged_range = merge_ranges(distinct_ranges.at(-1), range);
+                    let merged_range = merge_ranges(distinct_ranges.at(-1), range);
                     distinct_ranges.pop();
                     distinct_ranges.push(merged_range);
                 }
