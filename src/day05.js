@@ -1,4 +1,3 @@
-
 const fs = require('node:fs');
 
 fs.readFile('input/5.in', 'utf8', (err, data) => {

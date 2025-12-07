@@ -51,7 +51,6 @@ function rotate_by_step(current, rotation) {
            step = (last - 1 + 100) % 100;
         } else {
             step = (last + 1) % 100;
-            
         }
         if (step == 0) {
             zeroes += 1;
