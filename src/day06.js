@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const { execPath } = require('node:process');
 
-fs.readFile('input/6.test', 'utf8', (err, data) => {
+fs.readFile('input/6.in', 'utf8', (err, data) => {
     if (err) {
         console.error(err);
         return;
@@ -21,10 +21,7 @@ fs.readFile('input/6.test', 'utf8', (err, data) => {
     // console.log(raw_values[1][0]);
     // console.log(raw_values[2][0]);
     // console.log(raw_values[3][0]);
-
-
-    console.log("terms", terms);
-    parse_expressions(raw_values, terms);
+    parse_expressions(raw_values, terms).forEach( e => console.log(calculate_part_two(e, terms)));
     console.log("part two", part_two_ans);
 
 
@@ -64,21 +61,18 @@ function parse_expressions(raw_values, terms) {
             }
             latest_row[i] = current;
         }
-        console.log("latest", latest_row);
-        if (latest_row.every(v => v == '0')) {
+        if (latest_row.every(v => v == '0') || j == raw_length - 1) {
             expressions.push(next_expression.slice());
-            console.log("next", next_expression);
             for (let i = 0; i < next_expression.length; i += 1) {
                 next_expression[i] = [];
             }
         } else {
             for (let i = 0; i < latest_row.length; i += 1) {
                 next_expression[i].push(latest_row[i]);
-                console.log("runing", next_expression);
             }
         }
     }
-    console.log(expressions);
+    return expressions;
 }
 
 function values_to_expressions(values) {
@@ -95,6 +89,16 @@ function values_to_expressions(values) {
         }
     }
     return expressions;
+}
+
+function calculate_part_two(expression, terms) {
+    let ans = 0;
+    if (terms != 5) {
+        console.error("wrong terms", terms);
+    }
+    let operation = expression[expression.length - 1][0];
+    console.log("operation", operation);
+
 }
 
 function calculate(expression) {
