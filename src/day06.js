@@ -1,5 +1,4 @@
 const fs = require('node:fs');
-const { execPath } = require('node:process');
 
 fs.readFile('input/6.in', 'utf8', (err, data) => {
     if (err) {
