@@ -12,16 +12,12 @@ fs.readFile('input/6.in', 'utf8', (err, data) => {
         s = r.trim().split(' ');
         values.push(s.filter(n => n.length > 0 && !n.includes(' ')));
     });
-    let terms = values[0].length;
+    let terms = values.length;
     let part_one_ans = values_to_expressions(values).map(e => calculate(e)).reduce((a, b) => a + b);
     let part_two_ans = 0;
     console.log("part one:", part_one_ans);
 
-    // console.log(raw_values[0][0]);
-    // console.log(raw_values[1][0]);
-    // console.log(raw_values[2][0]);
-    // console.log(raw_values[3][0]);
-    parse_expressions(raw_values, terms).forEach( e => console.log(calculate_part_two(e, terms)));
+    part_two_ans = parse_expressions(raw_values, terms).map(e => calculate_part_two(e, terms)).reduce((a,b) => a + b);
     console.log("part two", part_two_ans);
 
 
@@ -44,8 +40,6 @@ function replace_spaces_with_zeros(value) {
 
 function parse_expressions(raw_values, terms) {
     let raw_length = raw_values[0].length;
-    let latest_row = [];
-    latest_row.length = terms;
     let next_expression = [];
     next_expression.length = terms;
     expressions = [];
@@ -54,23 +48,26 @@ function parse_expressions(raw_values, terms) {
     }
 
     for (let j = 0; j < raw_length; j += 1) {
+        let t_values = [];
         for (let i = 0; i < terms; i += 1) {
-            let current = raw_values[i][j];
-            if (current == ' ') {
-                current = '0';
+            if (raw_values[i][j]) {
+                // console.log("adding_t", raw_values[i][j]);
+                t_values.push(raw_values[i][j]);
             }
-            latest_row[i] = current;
         }
-        if (latest_row.every(v => v == '0') || j == raw_length - 1) {
+        if (t_values.every(t => t == ' ')) {
             expressions.push(next_expression.slice());
+            next_expression = [];
+            
             for (let i = 0; i < next_expression.length; i += 1) {
                 next_expression[i] = [];
             }
-        } else {
-            for (let i = 0; i < latest_row.length; i += 1) {
-                next_expression[i].push(latest_row[i]);
-            }
+        } else  {
+            next_expression.push(t_values);
         }
+    }
+    if (next_expression.length > 0){
+        expressions.push(next_expression);
     }
     return expressions;
 }
@@ -92,13 +89,33 @@ function values_to_expressions(values) {
 }
 
 function calculate_part_two(expression, terms) {
+    let operation = '!';
+    expression.forEach(e => {
+        if (e.length == terms) {
+            if (e[terms - 1] != ' ') {
+                operation = e[terms - 1];
+            }
+        }
+    });
+    let nums = [];
     let ans = 0;
-    if (terms != 5) {
-        console.error("wrong terms", terms);
-    }
-    let operation = expression[expression.length - 1][0];
-    console.log("operation", operation);
+    expression.forEach(t => {
+        let n_arr = t.slice(0, terms - 1).filter(v => v != ' ');
+        if (n_arr.length > 0) {
+            let n = n_arr.reduce((a,b) => a + b);
+            nums.push(+n);
+        }
 
+    });
+    if (operation == "*") {
+        ans = 1;
+    }
+    if (operation == "*") {
+        nums.forEach(n => ans *= n);
+    } else {
+        nums.forEach(n => ans += n);
+    }
+    return ans;
 }
 
 function calculate(expression) {
