@@ -16,7 +16,7 @@ fs.readFile('input/7.in', 'utf8', (err, data) => {
         rays = ray_splitter(rays, sl);
         hits += rays.hits;
     });
-    console.log("part one", hits);
+    console.log("part one:", hits);
 });
 
 function ray_splitter(rays, splitter_line) {
