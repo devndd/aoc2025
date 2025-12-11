@@ -16,7 +16,30 @@ fs.readFile('input/7.in', 'utf8', (err, data) => {
         rays = ray_splitter(rays, sl);
         hits += rays.hits;
     });
+    let part_one_ans = hits;
     console.log("part one:", hits);
+
+    let part_two_ans = 0;
+
+    
+  let beam_counts = Array(raw_values[0].length).fill(0);
+  beam_counts[ray_start] = 1;
+  raw_values.forEach(row => {
+    for (let i = 0; i < row.length; i += 1) {
+      if (row[i] == '.') {
+        beam_counts[i] = beam_counts[i];
+      } 
+      if (row[i] == '^') {
+        beam_counts[i-1] += beam_counts[i];
+        beam_counts[i+1] += beam_counts[i];
+        beam_counts[i] = 0;
+      }
+    }
+  });
+  part_two_ans = beam_counts.reduce((a,b) => a + b);
+  console.log("part two:", part_two_ans);
+
+
 });
 
 function ray_splitter(rays, splitter_line) {
