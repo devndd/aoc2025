@@ -7,7 +7,7 @@ const STATE = 1;
 const BUTTONS = 2;
 const JOLTAGE = 3;
 
-fs.readFile('input/10.test', 'utf8', (err, data) => {
+fs.readFile('10.in', 'utf8', (err, data) => {
     if (err) {
         console.error(err);
         return;
@@ -16,17 +16,50 @@ fs.readFile('input/10.test', 'utf8', (err, data) => {
 });
 
 
+function getAllBinaryCombinations(length) {
+    const combinations = [];
+    const totalCombinations = 1 << length; // Same as Math.pow(2, length)
+
+    for (let i = 0; i < totalCombinations; i++) {
+        let binaryString = i.toString(2); // Convert number to binary string
+        // Pad with leading zeros if needed
+        while (binaryString.length < length) {
+            binaryString = '0' + binaryString;
+        }
+
+        // Convert string to array of numbers (0 or 1)
+        const comboArray = binaryString.split('').map(Number);
+        combinations.push(comboArray);
+    }
+    return combinations;
+}
+
+
 function brute_force_machine(machine) {
     const button_len = machine[BUTTONS].length;
-    const max_attempts = 10;
-    for (let i = 0; i < button_len; i += 1) { 
-        press(machine, machine[BUTTONS][i]
-
+    const combinations = getAllBinaryCombinations(button_len);
+    let answer = button_len;
+    combinations.forEach(combination => {
+        machine[STATE] = 0;
+        for (let press_idx = 0; press_idx < combination.length; press_idx += 1) {
+            if (combination[press_idx] == 1) {
+                press(machine, press_idx);
+            }
+        }
+        if (machine[ANSWER] === machine[STATE]) {
+            if (combination.reduce((a,b) => a + b) < answer) {
+                answer = combination.reduce((a,b) => a + b);
+            }
+        }
+    });
+    return answer;
 }
+
 
 function solve(data) {
     const machines = parse(data);
-    test(machines);
+    let answers = machines.map(m => brute_force_machine(m));
+    console.log("part one:", answers.reduce((a,b) => a + b));
 }
 
 function test(machines) {
@@ -61,12 +94,12 @@ function press(machine, button_index) {
     let state = init;
     machine[2][button_index].forEach(button => {
         state = state ^ button;
-    } 
+    }
     );
     machine[1] = state;
 }
 
-function parse_joltage(joltage_str){
+function parse_joltage(joltage_str) {
     return joltage_str.split(',').map(e => +e);
 }
 
@@ -94,4 +127,3 @@ function answer_value(answer_str) {
     }
     return ans;
 }
-
