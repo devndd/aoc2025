@@ -1,103 +1,50 @@
-const fs = require('node:fs');
+const fs = require('fs');
 
-fs.readFile('11-2.test', 'utf8', (err, data) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
-    let dictionary = parse(data);
-    let edges = create_graph(data, dictionary);
-    // const src = dictionary.get('you');
-    // const dest = dictionary.get('out');
-    const v = dictionary.size;
-    // const paths = findPaths(v, edges, src, dest);
+// 1. Read the raw text file
+const input = fs.readFileSync('input/11.in', 'utf8').trim();
 
+// 2. Parse into an adjacency list
+const graph = {};
 
-    // console.log("part one:", paths.length);
-
-    const src2 = dictionary.get('svr');
-    const dest2 = dictionary.get('out');
-    const paths2 = findPaths(v, edges, src2, dest2);
-    console.log(paths2.length);
-    const fft = dictionary.get('fft');
-    const dac = dictionary.get('dac');
-    let part_two_ans = 0;
-    paths2.forEach(p => {
-        if (p.includes(fft) && p.includes(dac)) {
-            part_two_ans += 1;
-        }
-    });
-    console.log("part two:", part_two_ans);
+input.split('\n').forEach(line => {
+    // Each line: "source: target1 target2 ..."
+    const [source, targetsRaw] = line.split(':');
+    const sourceNode = source.trim();
+    
+    // Convert targets into an array, cleaning up whitespace
+    const targets = targetsRaw.trim().split(/\s+/);
+    
+    graph[sourceNode] = targets;
 });
 
-function create_graph(data, dictionary) {
-    let edges = [];
-    data.split('\n').forEach(l => {
-        elems = l.split(':');
-        node = elems[0];
-        adj = elems[1].trim().split(' ');
-        adj.forEach(a => {
-            edges.push([dictionary.get(node), dictionary.get(a)]);
-        })
-    })
-    return edges;
+// Example check: access connections for the 'you' node
+
+const memo = new Map();
+
+function countPaths(currentNode, hasDac, hasFft) {
+  // Base case: reaching the exit
+  if (currentNode === 'out') {
+    // Return 1 if the specific condition for Part 2 is met (e.g., both flags true)
+    return (hasDac && hasFft) ? 1 : 0;
+  }
+
+  // Create a unique key for the current state
+  const key = `${currentNode}-${hasDac}-${hasFft}`;
+  if (memo.has(key)) return memo.get(key);
+
+  let total = 0;
+  for (const nextNode of (graph[currentNode] || [])) {
+    // Update state based on the node we are visiting
+    const nextDac = hasDac || nextNode === 'dac';
+    const nextFft = hasFft || nextNode === 'fft';
+    
+    total += countPaths(nextNode, nextDac, nextFft);
+  }
+
+  memo.set(key, total);
+  return total;
 }
 
-function dictionary(nodes) {
-    let m = new Map();
-    let idx = 0;
-    nodes.forEach(e => {
-        m.set(e, idx);
-        idx += 1;
-    })
-    return m;
-}
-
-function parse(data) {
-    let nodes = new Set();
-    data.split('\n').forEach(element => {
-        let all = element.split(':');
-        nodes.add(all[0]);
-        nodes.add(...all[1].trim().split(' '));
-    });
-    console.log(nodes);
-    return dictionary(nodes);
-}
-
-// JavaScript Program to print all paths
-// from source to destination
-
-function dfs(src, dest, graph, path, allPaths) {
-
-    // Add the current vertex to the path
-    path.push(src);
-
-    // Store the path when destination is reached
-    if (src === dest) {
-        allPaths.push([...path])t;
-    }
-    else {
-        for (let adjNode of graph[src]) {
-            dfs(adjNode, dest, graph, path, allPaths);
-        }
-    }
-
-    // remove the current vertex from the path
-    path.pop();
-}
-
-function findPaths(v, edges, src, dest) {
-    let graph = Array.from({ length: v }, () => []);
-
-    // Build the graph from edges
-    for (let edge of edges) {
-        graph[edge[0]].push(edge[1]);
-    }
-
-    let allPaths = [];
-    let path = [];
-
-    dfs(src, dest, graph, path, allPaths);
-
-    return allPaths;
-}
+// Start from the server node
+console.log("part one:", countPaths('you', true, true));
+console.log("part two:", countPaths('svr', false, false));
